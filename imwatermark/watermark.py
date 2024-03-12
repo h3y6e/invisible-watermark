@@ -2,6 +2,7 @@ import base64
 import pprint
 import struct
 import uuid
+from typing import List, Union
 
 import numpy as np
 
@@ -53,16 +54,30 @@ class WatermarkEncoder(object):
         self._wmLen = len(self._watermarks)
         self._wmType = "bits"
 
-    def set_watermark(self, wmType="bytes", content=""):
+    def set_watermark(
+        self, wmType: str = "bytes", content: Union[str, bytes, List[Union[int, str]]] = ""
+    ) -> None:
         if wmType == "ipv4":
+            if not isinstance(content, str):
+                raise ValueError("Content must be a string for ipv4 type")
             self.set_by_ipv4(content)
         elif wmType == "uuid":
+            if not isinstance(content, str):
+                raise ValueError("Content must be a string for uuid type")
             self.set_by_uuid(content)
         elif wmType == "bits":
+            if not isinstance(content, list) or not all(
+                isinstance(bit, (int, str)) for bit in content
+            ):
+                raise ValueError("Content must be a list of integers or strings for bits type")
             self.set_by_bits(content)
         elif wmType == "bytes":
+            if not isinstance(content, bytes):
+                raise ValueError("Content must be bytes for bytes type")
             self.set_by_bytes(content)
         elif wmType == "b16":
+            if not isinstance(content, str):
+                raise ValueError("Content must be a string for b16 type")
             self.set_by_b16(content)
         else:
             raise NameError("%s is not supported" % wmType)
