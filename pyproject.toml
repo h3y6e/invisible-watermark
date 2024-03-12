@@ -2,9 +2,7 @@
 name = "invisible-watermark"
 version = "0.2.0"
 description = "The library for creating and decoding invisible image watermarks"
-authors = [
-    { name = "Qingquan Wang", email = "wangqq1103@gmail.com" }
-]
+authors = [{ name = "Qingquan Wang", email = "wangqq1103@gmail.com" }]
 dependencies = [
     "Pillow>=6.0.0",
     "PyWavelets>=1.1.1",
@@ -17,6 +15,21 @@ requires-python = ">=3.6"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "RUF"]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.rye]
 managed = true
