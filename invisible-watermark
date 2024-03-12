@@ -39,7 +39,7 @@ def main():
                         help='The path of input')
     parser.add_argument('-a', '--action', required=True, help='encode|decode')
     parser.add_argument('-t', '--type', default='bits', help='bytes|b16|bits|uuid|ipv4')
-    parser.add_argument('-m', '--method', default='maxDct', help='dwtDct|dwtDctSvd|rivaGan')
+    parser.add_argument('-m', '--method', default='maxDct', help='dwtDct|dwtDctSvd')
     parser.add_argument('-w', '--watermark', default='', help='embedded string')
     parser.add_argument('-l', '--length', default=0, type=int,
                         help='watermark bits length, required for bytes|b16|bits watermark')
@@ -61,8 +61,6 @@ def main():
 
         encoder = WatermarkEncoder()
         wmType = args.type
-        if args.method == 'rivaGan':
-            WatermarkEncoder.loadModel()
         bgr = cv2.imread(args.input)
         if args.type == 'bytes':
             wm = args.watermark.encode('utf-8')
@@ -72,7 +70,7 @@ def main():
             wm = [int(c) % 2 for c in args.watermark]
         else:
             wm = args.watermark
-        encoder.set_watermark(wmType, wm)
+        encoder.set_watermark(wmType, wm) # type: ignore
         start = time.time()
         bgr_encoded = encoder.encode(bgr, args.method)
         if args.verbose:
@@ -88,15 +86,13 @@ def main():
             decoder = WatermarkDecoder(wmType, args.length)
         else:
             decoder = WatermarkDecoder(args.type)
-        if args.method == 'rivaGan':
-            WatermarkDecoder.loadModel()
         bgr = cv2.imread(args.input)
         start = time.time()
         wm = decoder.decode(bgr, args.method)
         if args.verbose:
             print('decode time ms:', (time.time()-start) * 1000)
         if args.type in ['bytes', 'b16']:
-            wm = wm.decode('utf-8')
+            wm = wm.decode('utf-8') # type: ignore
         print(wm)
     else:
         sys.stderr.write('unknown action\n')
